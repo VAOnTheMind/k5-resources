@@ -33,3 +33,19 @@ hr.sep { border:0; border-top:3px dotted #777; margin:12px 0; }
   a { color:#000; text-decoration:none; }
   .site { border:none; padding:0; margin:0; }
 }
+/* ===== Bellringer Printables — brand overrides ===== */
+:root{
+  --brand:#4F46E5;  /* Indigo 600 */
+  --accent:#F59E0B; /* Amber 500 */
+  --ok:#0D9488;     /* Teal 600 */
+  --ink:#222;
+  --border:#e5e7eb;
+  --bg:#fafafa;
+  --paper:#fff;
+}
+body{font-family:Inter, system-ui, Arial, sans-serif; color:var(--ink); background:var(--bg);}
+.title{font-family:Nunito, Inter, Arial, sans-serif;}
+a{color:var(--brand);}
+.tagline{font-weight:600; color:#475569; margin:4px 0 0;}
+.badge{border-color:var(--brand);}
+.btn{border-color:var(--ink);}
