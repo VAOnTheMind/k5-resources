@@ -49,5 +49,17 @@ a{color:var(--brand);}
 .tagline{font-weight:600; color:#475569; margin:4px 0 0;}
 .badge{border-color:var(--brand);}
 .btn{border-color:var(--ink);}
+/* Align the top header with the content */
+.brandbar{
+  max-width: 920px;
+  margin: 12px auto 0;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid var(--border);
+}
+.brandbar img{ height: 36px; width: auto; display: block; }
+@media (max-width:640px){ .brandbar img{ height: 30px; } }
 
 
