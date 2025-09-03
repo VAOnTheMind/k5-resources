@@ -61,5 +61,32 @@ a{color:var(--brand);}
 }
 .brandbar img{ height: 36px; width: auto; display: block; }
 @media (max-width:640px){ .brandbar img{ height: 30px; } }
+/* ===== Bellringer — header + nav + mobile ===== */
+:root{ --brand:#4F46E5; --accent:#F59E0B; --ink:#222; --border:#e5e7eb; --bg:#fafafa; --paper:#fff; }
+a{ color:var(--brand); }
+
+.brandbar{
+  max-width:920px; margin:12px auto 0; padding:8px 12px;
+  display:flex; align-items:center; gap:12px;
+  border-bottom:1px solid var(--border);
+}
+.brandbar img{ height:36px; width:auto; display:block; }
+
+.topnav{ margin-left:auto; display:flex; gap:12px; flex-wrap:wrap; }
+.topnav a{
+  text-decoration:none; font-weight:600; padding:6px 10px; border-radius:999px;
+}
+.topnav a:hover{ background:var(--border); }
+
+@media (max-width: 720px){
+  .site{ margin:12px auto; padding:16px; }
+  h1{ font-size:22px; }
+  .brandbar{ padding:6px 8px; gap:8px; }
+  .brandbar img{ height:30px; }
+  .topnav{ gap:8px; overflow-x:auto; white-space:nowrap; -webkit-overflow-scrolling:touch; }
+  .topnav a{ padding:6px 8px; font-size:14px; }
+  .card{ padding:12px; }
+  .btn{ padding:8px 12px; }
+}
 
 
