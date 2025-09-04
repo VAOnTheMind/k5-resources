@@ -19,8 +19,11 @@ def build_block(chain, fname):
         ('3', f"{chain[1][0]} {chain[1][1]} {chain[1][2]} → {chain[2][0]} {chain[2][1]} _"),
         ('4', f"{chain[2][0]} {chain[2][1]} _ → {chain[3][0]} {chain[3][1]} {chain[3][2]}"),
     ]
-    items_html = "\n        ".join([f'<div class="item"><span class="num">{n}</span><div class="prompt">{t}</div></div>' for n,t in steps])
-    return f'''
+    items_html = "\n        ".join(
+        [f'<div class="item"><span class="num">{n}</span><div class="prompt">{t}</div></div>' for n,t in steps]
+    )
+
+    tpl = '''
       <div class="worksheet">
         <div class="header">
           <div class="title">Word Ladder — Short “a”</div>
@@ -32,7 +35,7 @@ def build_block(chain, fname):
         </div>
         <hr class="sep"/>
         <div class="directions">Change ONE letter each step to make a new real word. Don’t rearrange letters.</div>
-        {items_html}
+        {items}
         <div class="note">Nice job climbing!</div>
         <div class="footerbar"><span>Word Ladders</span><span>Print-friendly • B/W</span></div>
       </div>
@@ -42,24 +45,25 @@ def build_block(chain, fname):
         <button class="btn" onclick="window.print()">Print / Save PDF</button>
         <a class="btn" href="../index.html">← Back to Home</a>
       </p>
-      {PDF_LIB}
+      {pdf_lib}
       <script>
-        (function(){
-          const btn = document.getElementById('dl-pdf');
-          if(!btn) return;
-          btn.addEventListener('click', () => {
-            const el = document.querySelector('.worksheet');
-            html2pdf().set({
-              margin:[0.5,0.5,0.5,0.5],
-              filename: "{fname.replace('.html','.pdf')}",
-              image: {type:'jpeg', quality:0.98},
-              html2canvas: {scale:2, useCORS:true, letterRendering:true},
-              jsPDF: {unit:'in', format:'letter', orientation:'portrait'}
-            }).from(el).save();
-          });
-        })();
+      (function() {{
+        var btn = document.getElementById('dl-pdf');
+        if(!btn) return;
+        btn.addEventListener('click', function() {{
+          var el = document.querySelector('.worksheet');
+          html2pdf().set({{
+            margin:[0.5,0.5,0.5,0.5],
+            filename: '{pdf_name}',
+            image: {{type:'jpeg', quality:0.98}},
+            html2canvas: {{scale:2, useCORS:true, letterRendering:true}},
+            jsPDF: {{unit:'in', format:'letter', orientation:'portrait'}}
+          }}).from(el).save();
+        }});
+      }})();
       </script>
     '''
+    return tpl.format(items=items_html, pdf_lib=PDF_LIB, pdf_name=fname.replace('.html', '.pdf'))
 
 def main():
     date = today_stamp()
@@ -68,6 +72,9 @@ def main():
     inner = PAGE_OPEN + build_block(chain, fname) + PAGE_CLOSE
     write_html(os.path.join("worksheets", fname), "Word Ladder — Grade 1", inner, is_root=False)
     update_home_list("index.html", f"worksheets/{fname}", f"Word Ladder (G1) — {date}")
+
+if __name__ == "__main__":
+    main()
 
 if __name__ == "__main__":
     main()
