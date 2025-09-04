@@ -42,6 +42,15 @@ jobs:
           python scripts/gen_word_ladder.py
           python scripts/gen_math_mixed_g2.py
 
+      - name: Verify outputs
+        run: |
+          echo "==== git status (before commit) ===="
+          git status --porcelain
+          echo "==== list worksheets dir ===="
+          ls -la worksheets || true
+          echo "==== show first 2 new files (if any) ===="
+          ls -1t worksheets | head -n 2 || true
+
       # Commit to a branch (works even if 'main' is protected)
       - name: Commit changes
         run: |
@@ -60,9 +69,12 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A
+          echo "==== git status (staged) ===="
+          git status --porcelain
           if git diff --cached --quiet; then
             echo "No changes to commit" && exit 0
           fi
           git commit -m "Auto-publish worksheets: $(date -u +%Y-%m-%d)"
           git push
+
 
