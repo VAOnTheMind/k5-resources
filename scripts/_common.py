@@ -37,6 +37,8 @@ def write_html(path, title, inner_html, is_root=False):
     p = pathlib.Path(path)
     p.parent.mkdir(parents=True, exist_ok=True)
     p.write_text(html, encoding="utf-8")
+    print(f"::notice title=Worksheet::Wrote {p.resolve()}")
+
 
 def update_home_list(index_path, rel_href, link_text, keep=10):
     """Insert the newest worksheet link at the top of the 'Latest Worksheets' <ul>."""
