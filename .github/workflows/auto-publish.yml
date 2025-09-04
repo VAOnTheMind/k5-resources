@@ -2,37 +2,63 @@ name: Auto-publish daily worksheets
 
 on:
   schedule:
-    - cron: "0 11 * * *"   # 11:00 UTC every day; change this if you want
-  workflow_dispatch: {}     # lets you run it manually
+    - cron: "0 11 * * *"   # 11:00 UTC daily
+  workflow_dispatch: {}     # allow manual runs
 
 permissions:
   contents: write
+  pull-requests: write
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Avoid "dubious ownership" and similar git errors
+      - name: Mark workspace safe
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
         with:
           python-version: "3.x"
 
-- name: Generate worksheets
-  env:
-    PYTHONPATH: scripts
-  run: |
-    python scripts/gen_word_ladder.py
-    python scripts/gen_math_mixed_g2.py
-
-
-      - name: Commit & push changes
+      # Small sanity check (helps if anything still fails)
+      - name: Sanity check
         run: |
+          pwd
+          ls -la
+          python --version
+
+      # <- Most common failure is imports; PYTHONPATH fixes it.
+      - name: Generate worksheets
+        env:
+          PYTHONPATH: scripts
+        run: |
+          python scripts/gen_word_ladder.py
+          python scripts/gen_math_mixed_g2.py
+
+      # Commit to a branch (works even if 'main' is protected)
+      - name: Commit changes
+        run: |
+          git checkout -B auto/worksheets
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A
           if git diff --cached --quiet; then
-            echo "No changes to commit"
-          else
-            git commit -m "Auto-publish worksheets: $(date -u +%Y-%m-%d)"
-            git push
+            echo "No changes to commit" && exit 0
           fi
+          git commit -m "Auto-publish worksheets: $(date -u +%Y-%m-%d)"
+
+      # Open (or update) a PR so it doesn't get blocked by branch protection
+      - name: Create or update PR
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: auto/worksheets
+          title: "Auto-publish worksheets"
+          body: "Automated daily worksheet update."
+          commit-message: "Auto-publish worksheets"
