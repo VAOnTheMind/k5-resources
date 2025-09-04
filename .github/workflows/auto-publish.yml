@@ -2,12 +2,11 @@ name: Auto-publish daily worksheets
 
 on:
   schedule:
-    - cron: "0 11 * * *"   # 11:00 UTC daily
-  workflow_dispatch: {}     # allow manual runs
+    - cron: "0 11 * * *"     # 11:00 UTC daily
+  workflow_dispatch: {}       # allow manual runs
 
 permissions:
   contents: write
-  pull-requests: write
 
 jobs:
   build:
@@ -18,7 +17,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      # Avoid "dubious ownership" and similar git errors
       - name: Mark workspace safe
         run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
 
@@ -27,14 +25,11 @@ jobs:
         with:
           python-version: "3.x"
 
-      # Small sanity check (helps if anything still fails)
       - name: Sanity check
         run: |
-          pwd
-          ls -la
           python --version
+          ls -la
 
-      # <- Most common failure is imports; PYTHONPATH fixes it.
       - name: Generate worksheets
         env:
           PYTHONPATH: scripts
@@ -51,31 +46,15 @@ jobs:
           echo "==== show first 2 new files (if any) ===="
           ls -1t worksheets | head -n 2 || true
 
-      # Commit to a branch (works even if 'main' is protected)
-      - name: Commit changes
+      - name: Commit & push changes
         run: |
-          git checkout -B auto/worksheets
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A
+          echo "==== git status (staged) ===="
+          git status --porcelain
           if git diff --cached --quiet; then
             echo "No changes to commit" && exit 0
           fi
           git commit -m "Auto-publish worksheets: $(date -u +%Y-%m-%d)"
-
-      # Open (or update) a PR so it doesn't get blocked by branch protection
-- name: Commit & push changes
-  run: |
-    git config user.name "github-actions[bot]"
-    git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-    git add -A
-    echo "==== git status (staged) ===="
-    git status --porcelain
-    if git diff --cached --quiet; then
-      echo "No changes to commit" && exit 0
-    fi
-    git commit -m "Auto-publish worksheets: $(date -u +%Y-%m-%d)"
-    git push
-
-
-
+          git push
