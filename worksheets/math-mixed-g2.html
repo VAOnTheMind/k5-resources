@@ -47,9 +47,34 @@
 
         <div class="note">Answer key provided separately for teachers.</div>
       </div>
+<p style="display:flex;gap:8px;flex-wrap:wrap;">
+  <button class="btn" id="dl-pdf">Download PDF</button>
+  <button class="btn" onclick="window.print()">Print / Save PDF</button>
+  <a class="btn" href="math-mixed-g2-answers.html">Teacher Answer Key</a>
+  <a class="btn" href="../index.html">← Back to Home</a>
+</p>
 
-      <p><a class="btn" href="math-mixed-g2-answers.html">View Teacher Answer Key</a></p>
-      <p><a class="btn" href="../index.html">← Back to Home</a></p>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"
+  integrity="sha512-YcsIPnY1Qm6tYTN3nGZxP+JmKp1Fb0DHW/1yCI1Gz9oYw4LwMe1bKjM+m3r3Zjxi9h/7t3tkQjvQlu1I3fVzLA=="
+  crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+  (function(){
+    const btn = document.getElementById('dl-pdf');
+    if(!btn) return;
+    btn.addEventListener('click', () => {
+      const el = document.querySelector('.worksheet');
+      const opt = {
+        margin: [0.5, 0.5, 0.5, 0.5],
+        filename: 'math-mixed-g2.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true, letterRendering: true },
+        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+      };
+      html2pdf().set(opt).from(el).save();
+    });
+  })();
+</script>
+
     </main>
 
     <aside class="ad-rail"><div class="ad-box">Ad space (300×250)</div></aside>
