@@ -17,10 +17,13 @@ jobs:
         with:
           python-version: "3.x"
 
-      - name: Generate worksheets
-        run: |
-          python scripts/gen_word_ladder.py
-          python scripts/gen_math_mixed_g2.py
+- name: Generate worksheets
+  env:
+    PYTHONPATH: scripts
+  run: |
+    python scripts/gen_word_ladder.py
+    python scripts/gen_math_mixed_g2.py
+
 
       - name: Commit & push changes
         run: |
