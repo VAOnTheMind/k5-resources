@@ -24,7 +24,7 @@ def build_set():
 
 def worksheet_html(items, ws_fname, ans_fname):
     items_html = "\n        ".join([f'<div class="item"><span class="num">{i+1}</span><div class="prompt">{t}</div></div>' for i,t in enumerate(items)])
-    return f'''
+    tpl = '''
       <div class="worksheet">
         <div class="header">
           <div class="title">Math Mixed Practice (Within 100)</div>
@@ -36,34 +36,35 @@ def worksheet_html(items, ws_fname, ans_fname):
         </div>
         <hr class="sep"/>
         <div class="directions">Solve. Show neat work.</div>
-        {items_html}
+        {items}
         <div class="note">Answer key provided separately for teachers.</div>
       </div>
 
       <p style="display:flex;gap:8px;flex-wrap:wrap;">
         <button class="btn" id="dl-pdf">Download PDF</button>
         <button class="btn" onclick="window.print()">Print / Save PDF</button>
-        <a class="btn" href="{ans_fname}">Teacher Answer Key</a>
+        <a class="btn" href="{ans}">Teacher Answer Key</a>
         <a class="btn" href="../index.html">← Back to Home</a>
       </p>
-      {PDF_LIB}
+      {pdf_lib}
       <script>
-        (function(){
-          const btn = document.getElementById('dl-pdf');
-          if(!btn) return;
-          btn.addEventListener('click', () => {
-            const el = document.querySelector('.worksheet');
-            html2pdf().set({
-              margin:[0.5,0.5,0.5,0.5],
-              filename: "{ws_fname.replace('.html','.pdf')}",
-              image: {type:'jpeg', quality:0.98},
-              html2canvas: {scale:2, useCORS:true, letterRendering:true},
-              jsPDF: {unit:'in', format:'letter', orientation:'portrait'}
-            }).from(el).save();
-          });
-        })();
+      (function() {{
+        var btn = document.getElementById('dl-pdf');
+        if(!btn) return;
+        btn.addEventListener('click', function() {{
+          var el = document.querySelector('.worksheet');
+          html2pdf().set({{
+            margin:[0.5,0.5,0.5,0.5],
+            filename: '{pdf_name}',
+            image: {{type:'jpeg', quality:0.98}},
+            html2canvas: {{scale:2, useCORS:true, letterRendering:true}},
+            jsPDF: {{unit:'in', format:'letter', orientation:'portrait'}}
+          }}).from(el).save();
+        }});
+      }})();
       </script>
     '''
+    return tpl.format(items=items_html, ans=ans_fname, pdf_lib=PDF_LIB, pdf_name=ws_fname.replace('.html', '.pdf'))
 
 def answers_html(answers, ws_fname):
     li = "\n        ".join([f"<li>{a}</li>" for a in answers])
